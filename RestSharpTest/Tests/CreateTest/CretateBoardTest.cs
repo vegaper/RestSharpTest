@@ -1,12 +1,15 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharpTest.Consts;
+using RestSharpTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace RestSharpTest.Tests.CreateTest 
 {
@@ -38,6 +41,24 @@ namespace RestSharpTest.Tests.CreateTest
             responseContent = JToken.Parse(response.Content);
            
             Assert.True(responseContent.Children().Select(token => token.SelectToken("name")).Contains(boardName));
+        }
+
+        [Test]
+        public void CheckCreateBoardDeseri()
+        {
+            var boardName = "New Board" + DateTime.Now.ToLongTimeString();
+           
+            Board myboard = new Board{ name=boardName};
+            var jsonBody = JsonConvert.SerializeObject(myboard) ;
+            var request = RequestWithAuth(BoardsEndpoints.CreateBoardUrl)
+                .AddJsonBody(jsonBody);;
+
+            var response = _client.Post<Board>(request);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(boardName, response.Data.name);
+            _createdBoardId = response.Data.Id;
+
+           
         }
 
         [TearDown]

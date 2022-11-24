@@ -12,9 +12,15 @@ namespace RestSharpTest
     {
         protected static IRestClient _client;
 
+        //[OneTimeSetUp]
+        //public static void InitializeRestClient() =>
+        //   _client = new RestClient("https://api.trello.com");
+
         [OneTimeSetUp]
-        public static void InitializeRestClient() =>
-           _client = new RestClient("https://api.trello.com");
+        public static void setupmethod()
+        {
+            _client = new RestClient("https://api.trello.com");
+        }
 
 
         protected IRestRequest RequestWithAuth(string url) =>
